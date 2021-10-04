@@ -1,25 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GetPokemonList } from "../actions/pokemonActions";
 import { useEffect } from "react";
 import _ from "lodash";
+import { Link } from "react-router-dom";
+import ReactPaginate from "react-paginate";
 
-const PokemonList = () => {
+const PokemonList = (props) => {
+  const [search, setSearch] = useState();
   const dispatch = useDispatch();
   const pokemonList = useSelector((state) => state.PokemonList);
-  console.log(pokemonList);
-  let page = 1;
-  useEffect(() => {
-    FetchData(page);
-  });
+  console.log(pokemonList, "list from selector");
 
-  const FetchData = (page) => {
-    dispatch(GetPokemonList(page));
-  };
+  useEffect(() => {
+    dispatch(GetPokemonList());
+  }, [dispatch]);
 
   const Showdata = () => {
-    if (_.isEmpty(pokemonList.data)) {
-      return <p>Have Data</p>;
+    if (!_.isEmpty(pokemonList.data)) {
+      return pokemonList.data.map((el) => {
+        return (
+          <div className={"list-wrapper"}>
+            <div className={"pokemom-item"}>
+              <p>{el.name}</p>
+              <Link to={`/pokemon/${el.name}`}>View</Link>
+            </div>
+          </div>
+        );
+      });
     }
     if (pokemonList.loading) {
       return <p>Loading...</p>;
@@ -30,6 +38,26 @@ const PokemonList = () => {
     return <p>unable to get data</p>;
   };
 
-  return <div>{Showdata()}</div>;
+  return (
+    <div>
+      <div className={"search-wrapper"}>
+        <p>Search:</p>
+        <input type="text" onChange={(e) => setSearch(e.target.value)} />
+        <button onClick={() => props.history.push(`/pokemon/${search}`)}>
+          Search
+        </button>
+      </div>
+      {Showdata()}
+
+      {!_.isEmpty(pokemonList.data) && (
+        <ReactPaginate
+          pageCount={Math.ceil(pokemonList.count / 15)}
+          pageRangeDisplayed={2}
+          marginPageDisplayed={1}
+          onPageChange={(data) => data.selected + 1}
+        />
+      )}
+    </div>
+  );
 };
 export default PokemonList;
