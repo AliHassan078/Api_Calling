@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GetPokemonList } from "../actions/pokemonActions";
@@ -13,9 +14,12 @@ const PokemonList = (props) => {
   console.log(pokemonList, "list from selector");
 
   useEffect(() => {
-    dispatch(GetPokemonList());
-  }, [dispatch]);
+    FetchData(1);
+  }, []);
 
+  const FetchData = (page = 1) => {
+    dispatch(GetPokemonList(page));
+  };
   const Showdata = () => {
     if (!_.isEmpty(pokemonList.data)) {
       return pokemonList.data.map((el) => {
@@ -54,7 +58,8 @@ const PokemonList = (props) => {
           pageCount={Math.ceil(pokemonList.count / 15)}
           pageRangeDisplayed={2}
           marginPageDisplayed={1}
-          onPageChange={(data) => data.selected + 1}
+          onPageChange={(data) => FetchData(data.selected + 1)}
+          containerClassName={"paginaton"}
         />
       )}
     </div>

@@ -56,3 +56,11 @@ nav a {
   align-items: center;
   margin: 20px 0;
 }
+.paginaton {
+  display: flex;
+  width: 500px;
+  margin: auto;
+  list-style: none;
+  justify-content: space-between;
+  padding: 0;
+}
